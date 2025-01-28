@@ -1,0 +1,49 @@
+
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile  # Ensure you have a Dockerfile in the ./server directory
+    ports:
+      - "2000:2000"  # Map host port 2000 to container port 2000
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/SassApp  # MongoDB URI for backend connection
+    depends_on:
+      - mongo  # Ensures MongoDB starts before the backend
+    networks:
+      - app_network
+    volumes:
+      - ./server:/app  # Mount the server code into the container
+    command: "npm start"  # Ensure the start command is correct (npm start or node server.js)
+
+  mongo:
+    image: mongo:6.0  # Use the official MongoDB image
+    container_name: mongoSass
+    ports:
+      - "27017:27017"  # Expose MongoDB port
+    volumes:
+      - mongodb_data:/data/db  # Persist MongoDB data in a volume
+    networks:
+      - app_network  # Connect MongoDB to the custom network
+
+  frontend:
+    build:
+      context: ./front # Assuming your frontend code is in the ./frontend directory
+      dockerfile: Dockerfile  # Ensure you have a Dockerfile in the ./frontend directory
+    ports:
+      - "3000:3000"  # Map host port 3000 to container port 3000
+    depends_on:
+      - backend  # Ensure frontend waits for the backend service to be ready
+    networks:
+      - app_network
+    volumes:
+      - ./front:/app  # Mount the frontend code into the container
+    command: "npm start"  # Start the React app with npm start
+
+volumes:
+  mongodb_data:  # Declare MongoDB data volume
+
+networks:
+  app_network:  # Custom network for communication between services
+    driver: bridge  # Use the bridge network driver
