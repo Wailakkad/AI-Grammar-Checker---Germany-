@@ -5,7 +5,7 @@ import LogoImg from "./imgSidebar/Logo.png"
 const Footer = ({ darkMode }) => {
   return (
     <footer
-      className={`w-full py-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#ffd7ba] text-black'} mt-16`}
+      className={`w-full py-8 ${darkMode ? 'bg-gray-900 text-white' : 'bg-[#f9dcc4] text-black'} mt-16`}
     >
       <div className="max-w-screen-xl mx-auto px-6 flex flex-col items-center md:flex-row md:justify-between">
         {/* Logo Section */}
@@ -22,8 +22,8 @@ const Footer = ({ darkMode }) => {
             <p className="text-sm w-[200px] text-center">
               Our mission is to help you write better with AI-powered grammar checking.
             </p>
-          </div>
 
+          </div>
           <div>
             <h3 className="font-semibold mb-2 text-2xl">Quick Links</h3>
             <ul className="text-sm">

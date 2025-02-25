@@ -12,7 +12,7 @@ const Profile = ({ darkMode , setLogin }) => {
   const Navigate = useNavigate();
 
    
-  // Function to refresh access token
+ 
   const refreshAccessToken = async () => {
     const encryptedRefreshToken = localStorage.getItem('refreshToken'); // Retrieve encrypted refresh token
     const refreshTokenIv = localStorage.getItem('refreshTokenIv'); // Retrieve IV for refresh token
@@ -21,7 +21,7 @@ const Profile = ({ darkMode , setLogin }) => {
       setError('Refresh token or IV not found in localStorage.');
       return null;
     }
-  
+
     try {
       // Send the encrypted refresh token and IV to the backend for a new access token
       const response = await axios.post(
@@ -50,38 +50,40 @@ const Profile = ({ darkMode , setLogin }) => {
   
   useEffect(() => {
     const fetchUser = async () => {
-      const encryptedToken = localStorage.getItem('accessToken'); // Retrieve encrypted token from localStorage
-      const iv = localStorage.getItem('accessTokenIv'); // Retrieve IV from localStorage
+      setLoading(true); // Start loading before making the request
+  
+      const encryptedToken = localStorage.getItem('accessToken'); 
+      const iv = localStorage.getItem('accessTokenIv'); 
   
       if (!encryptedToken || !iv) {
-        setError('Token or IV not found in localStorage ');
+        setError('Token or IV not found in localStorage');
         setLoading(false);
         return;
       }
   
       try {
-        // Send the encrypted token and IV as part of the request body or headers
-        const response = await axios.post(
-          'http://localhost:2000/api/app/profile',
-          { token: encryptedToken, iv }
-        );
+        const response = await axios.post('http://localhost:2000/api/app/profile', {
+          token: encryptedToken,
+          iv,
+        });
   
         if (response.status === 200) {
-          setUser(response.data.user); // Save user data in state
+          setUser(response.data.user); 
+          setLoading(false); // Stop loading when data is received
         } else {
           setError('Failed to fetch profile data.');
+          setLoading(false);
         }
       } catch (err) {
         if (err.response && err.response.status === 401) {
-          // If unauthorized (token expired), attempt to refresh token
           const newAccessToken = await refreshAccessToken();
           if (newAccessToken) {
-            // After refreshing the token, retry fetching user data with the new access token
             const updatedToken = localStorage.getItem('accessToken');
             const updatedIv = localStorage.getItem('accessTokenIv');
-            
+  
             if (updatedToken && updatedIv) {
-              await fetchUser(); // Retry with the new token and IV
+              await fetchUser();
+              return; // Exit to prevent `setLoading(false)` from running
             } else {
               setError('Unable to refresh token.');
             }
@@ -92,37 +94,31 @@ const Profile = ({ darkMode , setLogin }) => {
           setError('An error occurred while fetching profile data.');
         }
         console.error(err);
+        setLoading(false);
       }
-      setLoading(false);
     };
   
     fetchUser();
   }, []);
- 
   
   if (loading) {
-    return <div>Loading...</div>; // Show loading state until user data is fetched
+    return <div>Loading...</div>;
   }
-
+  
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center gap-8 mt-16 py-12 bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded-lg shadow-lg">
-        {/* Error Title */}
-        <h1 className="text-white text-4xl font-extrabold mb-4 animate__animated animate__fadeIn">Oops! Something Went Wrong</h1>
-  
-        {/* Error Image */}
+      <div className="w-full h-screen flex flex-col items-center justify-center gap-8 mt-16 py-12 rounded-lg">
+        <h1 className="text-white text-4xl font-extrabold mb-4 animate__animated animate__fadeIn">
+          Oops! Something Went Wrong
+        </h1>
         <div className="mb-6 animate__animated animate__zoomIn">
           <img src={imgError} alt="Error" className="w-32 h-32 object-contain" />
         </div>
-  
-        {/* Error Message */}
-        <p className="text-white text-lg text-center font-medium max-w-md animate__animated animate__fadeIn animate__delay-1s">
+        <p className="text-red-600 text-lg text-center font-medium max-w-md animate__animated animate__fadeIn animate__delay-1s">
           We encountered an issue: <span className="text-xl font-bold">{error}</span>. Please try again later.
         </p>
-  
-        {/* Retry Button */}
         <button
-          onClick={() =>Navigate('/login') } // Reloading the page as a retry action
+          onClick={() => Navigate('/login')}
           className="mt-6 px-6 py-3 bg-white text-red-600 font-semibold text-lg rounded-lg shadow-md hover:bg-red-100 transition-all ease-in-out duration-300 transform hover:scale-105"
         >
           Retry
@@ -130,6 +126,7 @@ const Profile = ({ darkMode , setLogin }) => {
       </div>
     );
   }
+  
   
 
   return (

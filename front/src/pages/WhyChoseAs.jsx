@@ -67,7 +67,7 @@ const WhyChoseAs = ({darkMode , login}) => {
         ))}
       </div>
       <Link to={login ? '/profile' : '/login'}>  
-              <button className={`${darkMode ? "bg-white" : "bg-[#001845]"} flex items-center justify-center text-[#fb8500] px-8 py-2 rounded-lg mt-8 mb-12`}>
+      <button className={`${darkMode ? "bg-white text-black" : "bg-black text-white"} flex items-center justify-center font-bold  px-8 py-3 rounded-lg mt-8 mb-12`}>
                 Start Now
               </button>
             </Link>

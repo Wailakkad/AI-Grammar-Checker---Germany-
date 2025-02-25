@@ -58,9 +58,9 @@ const SettingsProfile = ({darkMode}) => {
     </h2>
   </div>
 
-  <div className="flex items-start mt-16 gap-16">
+  <div className="flex items-start justify-between mt-16 max-w-[1200px]">
     {/* Image container */}
-    <div className="w-[350px] h-[350px] flex-shrink-0">
+    <div className="w-[450px] h-[450px]  flex-shrink-0">
       <img
         src={img}
         alt="Profile"
@@ -83,7 +83,7 @@ const SettingsProfile = ({darkMode}) => {
 
     {/* Form or profile details */}
     {EDIT ? (
-      <form onSubmit={handleFormSubmit} className="space-y-6 w-full">
+      <form onSubmit={handleFormSubmit} className="space-y-6 w-full p-10">
         {/* Username */}
         <div>
           <label
@@ -203,7 +203,7 @@ const SettingsProfile = ({darkMode}) => {
         </div>
       </form>
     ) : (
-      <div className=" flex flex-col space-y-6 gap-8">
+      <div className=" flex flex-col space-y-6 gap-8 p-8">
         {/* Profile details */}
         <div className="flex items-center gap-8">
           <h3
